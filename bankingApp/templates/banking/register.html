@@ -12,7 +12,7 @@
 		<h2>Registration</h2>
 
 		{% for f in form %}
-		<p class="form-group{% if f.errors %} has-error{% endif %}">
+		<p>
 			<label for="{{ f.id_for_label }}">{{ f.label }}</label>
 			{{ f }}
 			{% if f.errors %}
