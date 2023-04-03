@@ -1,0 +1,10 @@
+{% extends 'banking/layout.html' %}
+{% block titile %}MXA Banking{% endblock %}
+
+{% block content %}
+         {% if user.is_authenticated %}
+                <h1>Welcome {{ user.username }} to the MXA Banking App!</h1>
+         {% else %}
+                <h1>Welcome to the MXA Banking App. Please log in</h1>
+         {% endif %}
+{% endblock %}

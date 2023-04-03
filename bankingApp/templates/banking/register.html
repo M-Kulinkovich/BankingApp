@@ -1,0 +1,25 @@
+{% extends 'banking/layout.html' %}
+{% block titile %}Registration{% endblock %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'banking/css/style_auth.css' %}">
+{% endblock %}
+
+{% block content %}
+	<form method="POST">
+		{% csrf_token %}
+		<h2>Registration</h2>
+
+		{% for f in form %}
+		<p class="form-group{% if f.errors %} has-error{% endif %}">
+			<label for="{{ f.id_for_label }}">{{ f.label }}</label>
+			{{ f }}
+			{% if f.errors %}
+			<span class="error-message">{{ f.errors.as_text }}</span>
+			{% endif %}
+		</p>
+		{% endfor %}
+		<input type="submit" value="Sign Up" />
+	</form>
+{% endblock %}
