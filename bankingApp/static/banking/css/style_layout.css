@@ -1,0 +1,51 @@
+body {
+    width: 100%;
+    margin: 0;
+    background-color: #F5F5F5;
+}
+
+header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #283142;
+    color: white;
+    padding: 20px;
+}
+
+nav ul {
+    list-style: none;
+    text-align: right;
+}
+
+nav li {
+    display: inline-block;
+    margin-right: 20px;
+}
+
+nav li a {
+    color: white;
+    text-decoration: none;
+    font-size: 20px;
+}
+
+nav li a:hover {
+    text-decoration: underline;
+}
+
+
+footer {
+    background-color: #283142;
+    color: white;
+    padding: 10px;
+    text-align: center;
+    bottom: 0;
+    position: fixed;
+    width: 100%;
+}
+
+.bank-name h1 {
+  margin: 0;
+  font-size: 30px;
+  font-weight: bold;
+}

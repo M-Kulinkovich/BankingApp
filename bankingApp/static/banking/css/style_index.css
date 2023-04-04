@@ -1,51 +1,38 @@
 body {
-    width: 100%;
-    margin: 0;
-    background-color: #F5F5F5;
+    background-color: #f0f0f0;
 }
 
-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    background-color: #283142;
-    color: white;
-    padding: 20px;
-}
-
-nav ul {
-    list-style: none;
-    text-align: right;
-}
-
-nav li {
-    display: inline-block;
-    margin-right: 20px;
-}
-
-nav li a {
-    color: white;
-    text-decoration: none;
-    font-size: 20px;
-}
-
-nav li a:hover {
-    text-decoration: underline;
-}
-
-
-footer {
-    background-color: #283142;
-    color: white;
-    padding: 10px;
+.welcome-message {
+    font-size: 36px;
+    margin-top: 100px;
     text-align: center;
-    bottom: 0;
-    position: fixed;
-    width: 100%;
 }
 
-.bank-name h1 {
-  margin: 0;
-  font-size: 30px;
-  font-weight: bold;
+.currency-rates {
+    border: 2px solid #ccc;
+    border-radius: 10px;
+    display: inline-block;
+    margin-top: 100px;
+    margin-right: 100px;
+    margin-left: 150px;
+    padding: 60px;
+    text-align: left;
+    width: 400px;
+    float: left;
+}
+
+.currency-rates h2 {
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.currency-rates p {
+    font-size: 18px;
+    margin-bottom: 10px;
+}
+
+.img-fluid {
+    max-width: 100%;
+    height: auto;
+    float: right;
 }

@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <title>{% block titile %}{% endblock %}</title>
-    <link rel="stylesheet" href="{% static 'banking/css/style_index.css' %}">
+    <link rel="stylesheet" href="{% static 'banking/css/style_layout.css' %}">
     {% block head %}
     {% endblock %}
 </head>
@@ -18,7 +18,7 @@
                     <li><a href="{% url 'index' %}">Home</a></li>
                     <li><a href="#">Account</a></li>
                     <li><a href="#">Transactions</a></li>
-                    <li><a href="{% url 'logout' %}">Log out</a></li>
+                <li><b>{{ user.username }} | </b><a href="{% url 'logout' %}">Log out</a></li>
                 {% else %}
                     <li><a href="{% url 'register' %}">Sign Up</a></li>
                     <li><a href="{% url 'login' %}">Log In</a></li>
