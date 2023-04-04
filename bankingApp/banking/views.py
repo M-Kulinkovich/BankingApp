@@ -2,12 +2,18 @@ import json
 import os
 
 import requests
+from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView, LoginView
+from django.db.models import F
+from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
+from django.views import View
 from django.views.generic import CreateView, TemplateView
 
-from banking.forms import RegisterUserForm
+from banking.forms import RegisterUserForm, TransferForm
+from banking.models import Account, Transfer
 
 
 class IndexPage(TemplateView):
@@ -34,6 +40,57 @@ class IndexPage(TemplateView):
         context['pln_rate'] = pln_rate
 
         return context
+
+
+class AccountPage(View):
+    template_name = 'banking/account.html'
+
+    def get(self, request):
+        user = request.user.account
+        users = Account.objects.exclude(user=request.user)
+
+        form = TransferForm(sender=user)
+        context = {
+            'user': user,
+            'users': users,
+            'form': form,
+        }
+
+        return render(request, self.template_name, context)
+
+    def post(self, request):
+        users = Account.objects.exclude(user=request.user)
+        user = request.user.account
+
+        form = TransferForm(request.POST, sender=user)
+        if form.is_valid():
+            recipient = form.cleaned_data['recipient']
+            amount = form.cleaned_data['amount']
+
+            sender = request.user.account
+            if sender.balance < amount:
+                messages.error(request, 'Not enough money')
+                return redirect('account')
+
+            Account.objects.filter(pk=sender.pk).update(balance=F('balance') - amount)
+            Account.objects.filter(pk=recipient.pk).update(balance=F('balance') + amount)
+
+            Transfer.objects.create(
+                sender=sender,
+                recipient=recipient,
+                amount=amount,
+            )
+
+            messages.success(request, f'{amount} $ has been sent to {recipient.user.username}.')
+            return redirect('account')
+
+        context = {
+            'user': user,
+            'users': users,
+            'form': form,
+        }
+
+        return render(request, self.template_name, context)
 
 
 class LoginUser(LoginView):

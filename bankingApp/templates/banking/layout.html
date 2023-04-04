@@ -14,11 +14,11 @@
         </div>
         <nav>
             <ul>
-                {% if user.is_authenticated %}
+                {% if request.user.is_authenticated %}
                     <li><a href="{% url 'index' %}">Home</a></li>
-                    <li><a href="#">Account</a></li>
+                    <li><a href="{% url 'account' %}">Account</a></li>
                     <li><a href="#">Transactions</a></li>
-                <li><b>{{ user.username }} | </b><a href="{% url 'logout' %}">Log out</a></li>
+                <li><b>{{ request.user.username }} | </b><a href="{% url 'logout' %}">Log out</a></li>
                 {% else %}
                     <li><a href="{% url 'register' %}">Sign Up</a></li>
                     <li><a href="{% url 'login' %}">Log In</a></li>

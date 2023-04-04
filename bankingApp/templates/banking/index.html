@@ -8,28 +8,22 @@
 
 {% block content %}
     <div class="container">
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                {% if user.is_authenticated %}
-                     <h1 class="welcome-message">Welcome {{ user.username }} to the MXA Banking system!</h1>
-                {% else %}
-                    <h1 class="welcome-message">Welcome to the MXA Banking system. Please log in</h1>
-                {% endif %}
-            </div>
-            <div class="col-md-3">
+        <div>
+            {% if user.is_authenticated %}
+                 <h1 class="welcome-message">Welcome {{ user.username }} to the MXA Banking system!</h1>
+            <div>
                 <img src="{% static 'banking/img/MXA_logo.png' %}" alt="MXA Banking" class="img-fluid">
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-6 offset-md-3">
-                <div class="currency-rates">
-                    <h2>Currency Exchange Rates</h2>
-                    <p>EUR/USD: {{ eur_rate }}</p>
-                    <p>GBP/USD: {{ gbp_rate }}</p>
-                    <p>BYN/USD: {{ byn_rate }}</p>
-                    <p>PLN/USD: {{ pln_rate }}</p>
-                </div>
+            <div class="currency-rates">
+                <h2>Currency Exchange Rates</h2>
+                <p>EUR/USD: {{ eur_rate }}</p>
+                <p>GBP/USD: {{ gbp_rate }}</p>
+                <p>BYN/USD: {{ byn_rate }}</p>
+                <p>PLN/USD: {{ pln_rate }}</p>
             </div>
-        </div>
+                {% else %}
+                    <h1 class="welcome-message">Welcome to the MXA Banking system<br> Please log in</h1>
+                {% endif %}
+            </div>
     </div>
 {% endblock %}}
