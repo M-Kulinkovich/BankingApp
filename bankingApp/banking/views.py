@@ -4,19 +4,26 @@ import os
 import requests
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView, LoginView
-from django.db.models import F
+from django.db.models import F, Q
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
-from django.views.generic import CreateView, TemplateView
+from django.views.generic import CreateView, TemplateView, ListView
 
-from banking.forms import RegisterUserForm, TransferForm
+from banking.forms import RegisterUserForm, TransferForm, AddMoneyForm
 from banking.models import Account, Transfer
 
 
-class IndexPage(TemplateView):
+class TransactionsPageView(LoginRequiredMixin, ListView):
+    model = Transfer
+    template_name = 'banking/transactions.html'
+    context_object_name = 'transfer_list'
+
+
+class IndexPageView(TemplateView):
     template_name = 'banking/index.html'
 
     def get_context_data(self, **kwargs):
@@ -42,14 +49,18 @@ class IndexPage(TemplateView):
         return context
 
 
-class AccountPage(View):
+class AccountPageView(View):
     template_name = 'banking/account.html'
 
     def get(self, request):
         user = request.user.account
         users = Account.objects.exclude(user=request.user)
 
-        form = TransferForm(sender=user)
+        if request.user.is_staff:
+            form = AddMoneyForm()
+        else:
+            form = TransferForm(sender=user)
+
         context = {
             'user': user,
             'users': users,
@@ -62,27 +73,54 @@ class AccountPage(View):
         users = Account.objects.exclude(user=request.user)
         user = request.user.account
 
-        form = TransferForm(request.POST, sender=user)
-        if form.is_valid():
-            recipient = form.cleaned_data['recipient']
-            amount = form.cleaned_data['amount']
+        if request.user.is_staff:
+            form = AddMoneyForm(request.POST)
+            if form.is_valid():
+                recipient = form.cleaned_data['recipient']
+                amount = form.cleaned_data['amount']
 
-            sender = request.user.account
-            if sender.balance < amount:
-                messages.error(request, 'Not enough money')
+                Account.objects.filter(pk=recipient.pk).update(balance=F('balance') + amount)
+
+                Transfer.objects.create(
+                    sender=user,
+                    recipient=recipient,
+                    amount=amount,
+                )
+
+                messages.success(request, f'{amount} $ has been added to {recipient.user.username} account.')
                 return redirect('account')
+        else:
+            form = TransferForm(request.POST, sender=user)
 
-            Account.objects.filter(pk=sender.pk).update(balance=F('balance') - amount)
-            Account.objects.filter(pk=recipient.pk).update(balance=F('balance') + amount)
+            if form.is_valid():
+                recipient = form.cleaned_data['recipient']
+                amount = form.cleaned_data['amount']
 
-            Transfer.objects.create(
-                sender=sender,
-                recipient=recipient,
-                amount=amount,
-            )
+                sender = request.user.account
+                if sender.balance < amount:
+                    messages.error(request, 'Not enough money')
+                    return redirect('account')
+                elif amount == 0:
+                    messages.error(request, 'cant send 0 funds')
+                    return redirect('account')
 
-            messages.success(request, f'{amount} $ has been sent to {recipient.user.username}.')
-            return redirect('account')
+                Account.objects.filter(pk=sender.pk).update(balance=F('balance') - amount)
+                Account.objects.filter(pk=recipient.pk).update(balance=F('balance') + amount)
+
+                Transfer.objects.create(
+                    sender=sender,
+                    recipient=recipient,
+                    amount=amount,
+                )
+
+                Transfer.objects.create(
+                    sender=recipient,
+                    recipient=sender,
+                    amount=amount,
+                )
+
+                messages.success(request, f'{amount} $ has been added to {recipient.user.username}.')
+                return redirect('account')
 
         context = {
             'user': user,

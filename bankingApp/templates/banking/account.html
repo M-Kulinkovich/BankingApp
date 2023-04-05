@@ -7,16 +7,45 @@
 {% endblock %}
 
 {% block content %}
+    {% if request.user.is_staff %}
+
     <div class="account-container">
         <div class="user-info-container">
             <div class="user-info">
-                <div class="avatar-container">
-                    <img src="{% static 'banking/img/avatar.png' %}" alt="avatar" class="avatar">
-                </div>
                 <div class="account-details">
-                    <h2>Name: {{ user.user.username }}</h2>
-                    <p>Email: {{ user.user.email }}</p>
-                    <p>Account balance: {{ user.balance }}</p>
+                    <h2>Bank employee: <br>{{ user.user.first_name }} {{ user.user.last_name }}</h2>
+                </div>
+            </div>
+            <div class="money">
+            <h2>Add money to account:</h2>
+                <form method="post">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                    {% if messages %}
+                    <ul class="messages">
+                        {% for message in messages %}
+                        <p>{{ message }}</p>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                    <input type="submit" value="Add money" />
+                </form>
+            </div>
+        </div>
+        <div class="logo">
+            <img src="{% static 'banking/img/MXA_logo.png' %}" alt="MXA Banking" class="img-fluid">
+        </div>
+    </div>
+
+    {% else %}
+
+    <div class="account-container">
+        <div class="user-info-container">
+            <div class="user-info">
+                <div class="account-details">
+                    <h2><b>Name:</b> {{ user.user.username }}</h2>
+                    <p><b>Email:</b> {{ user.user.email }}</p>
+                    <p><b>Account balance: </b>{{ user.balance }} $</p>
                 </div>
             </div>
             <div class="money">
@@ -39,4 +68,5 @@
             <img src="{% static 'banking/img/MXA_logo.png' %}" alt="MXA Banking" class="img-fluid">
         </div>
     </div>
+    {% endif %}
 {% endblock %}

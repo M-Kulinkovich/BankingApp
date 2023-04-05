@@ -1,6 +1,6 @@
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.models import User
-from django.forms import ModelForm
+from django.forms import ModelForm, ModelChoiceField, DecimalField, CharField
 
 from .models import Transfer, Account
 
@@ -20,3 +20,12 @@ class TransferForm(ModelForm):
         self.sender = kwargs.pop('sender')
         super().__init__(*args, **kwargs)
         self.fields['recipient'].queryset = Account.objects.exclude(user=self.sender.user)
+
+
+class AddMoneyForm(ModelForm):
+    class Meta:
+        model = Transfer
+        fields = ['recipient', 'amount']
+
+    recipient = ModelChoiceField(queryset=Account.objects.all())
+    amount = DecimalField(max_digits=10, decimal_places=2)

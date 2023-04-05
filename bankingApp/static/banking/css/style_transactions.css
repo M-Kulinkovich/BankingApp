@@ -1,0 +1,23 @@
+.container {
+    text-align: center;
+}
+
+.table {
+    width:100%;
+}
+
+thead th {
+    background-color: #283142;
+    color: #fff;
+    padding: 5px;
+}
+
+tbody {
+    text-align: center;
+}
+
+tbody tr:nth-child(odd) {
+    background-color: #f2f2f2;
+
+}
+

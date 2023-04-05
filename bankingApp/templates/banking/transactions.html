@@ -1,0 +1,65 @@
+{% extends 'banking/layout.html' %}
+{% block title %}Transactions {{ user.user.username }}{% endblock %}
+
+{% block head %}
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'banking/css/style_transactions.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <h2>Transactions</h2>
+
+        <table class="table">
+        <thead>
+            <tr>
+                <th>Sender</th>
+                <th>Recipient</th>
+                <th>Amount</th>
+                <th>Date</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if user.is_staff %}
+            {% for transfer in transfer_list %}
+                <tr>
+                  <td>{{ transfer.sender }}</td>
+                  <td>{{ transfer.recipient }}</td>
+                  <td>{{ transfer.amount }}</td>
+                  <td>{{ transfer.date }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                  <td colspan="4">No transactions yet.</td>
+                </tr>
+            {% endfor %}
+          {% else %}
+            {% for transfer in user.account.sender.all %}
+                <tr>
+                    <td>You({{ transfer.sender }})</td>
+                    <td>{{ transfer.recipient }}</td>
+                    <td>{{ transfer.amount }}</td>
+                    <td>{{ transfer.date }}</td>
+                </tr>
+            {% empty %}
+                <tr>
+                  <td colspan="4">No transactions yet.</td>
+                </tr>
+            {% endfor %}
+            {% for transfer in user.account.recipient.all %}
+                <tr>
+                    <td>{{ transfer.sender }}</td>
+                    <td>You({{ transfer.recipient }})</td>
+                    <td>{{ transfer.amount }}</td>
+                    <td>{{ transfer.date }}</td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4">No transfers received yet.</td>
+                </tr>
+            {% endfor %}
+        {% endif %}
+        </tbody>
+        </table>
+    </div>
+{% endblock %}
