@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .views import *
+from banking.views import IndexPageView, LoginUser, RegisterUser, LogoutUser, AccountPageView, TransactionsPageView
 
 urlpatterns = [
     path('', IndexPageView.as_view(), name='index'),

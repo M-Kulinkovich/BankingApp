@@ -1,13 +1,11 @@
 import json
 import os
-
 import requests
+
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.mixins import LoginRequiredMixin
-from django.contrib.auth.models import User
 from django.contrib.auth.views import LogoutView, LoginView
-from django.db.models import F, Q
+from django.db.models import F
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
@@ -17,10 +15,11 @@ from banking.forms import RegisterUserForm, TransferForm, AddMoneyForm
 from banking.models import Account, Transfer
 
 
-class TransactionsPageView(LoginRequiredMixin, ListView):
+class TransactionsPageView(ListView):
     model = Transfer
     template_name = 'banking/transactions.html'
     context_object_name = 'transfer_list'
+    paginate_by = 25
 
 
 class IndexPageView(TemplateView):
