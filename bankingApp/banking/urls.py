@@ -1,7 +1,14 @@
 from django.urls import path
 
-from banking.views import IndexPageView, LoginUser, RegisterUser, LogoutUser, AccountPageView, TransactionsPageView, \
-    TransactionsCsvView
+from banking.views import (
+    IndexPageView,
+    LoginUser,
+    RegisterUser,
+    LogoutUser,
+    AccountPageView,
+    TransactionsPageView,
+    TransactionsCsvView,
+    )
 
 urlpatterns = [
     path('', IndexPageView.as_view(), name='index'),

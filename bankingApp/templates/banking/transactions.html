@@ -30,32 +30,29 @@
                 </tr>
             {% empty %}
                 <tr>
-                  <td colspan="4">No transactions yet.</td>
+                  <td>No transactions yet.</td>
                 </tr>
             {% endfor %}
           {% else %}
-            {% for transfer in user.account.sender.all %}
-                <tr>
-                    <td>You({{ transfer.sender }})</td>
-                    <td>{{ transfer.recipient }}</td>
-                    <td>{{ transfer.amount }}</td>
-                    <td>{{ transfer.date }}</td>
-                </tr>
+            {% for transfer in page_obj %}
+                {% if transfer.sender == user.account %}
+                    <tr>
+                        <td>You({{ transfer.sender }})</td>
+                        <td>{{ transfer.recipient }}</td>
+                        <td>{{ transfer.amount }}</td>
+                        <td>{{ transfer.date }}</td>
+                    </tr>
+                {% elif transfer.recipient == user.account %}
+                    <tr>
+                        <td>{{ transfer.sender }}</td>
+                        <td>You({{ transfer.recipient }})</td>
+                        <td>{{ transfer.amount }}</td>
+                        <td>{{ transfer.date }}</td>
+                    </tr>
+                {% endif %}
             {% empty %}
                 <tr>
-                  <td colspan="4">No transactions yet.</td>
-                </tr>
-            {% endfor %}
-            {% for transfer in user.account.recipient.all %}
-                <tr>
-                    <td>{{ transfer.sender }}</td>
-                    <td>You({{ transfer.recipient }})</td>
-                    <td>{{ transfer.amount }}</td>
-                    <td>{{ transfer.date }}</td>
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4">No transfers received yet.</td>
+                    <td>No transfers received yet.</td>
                 </tr>
             {% endfor %}
         {% endif %}

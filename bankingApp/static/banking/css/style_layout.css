@@ -38,6 +38,9 @@ footer {
     background-color: #283142;
     color: white;
     padding: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     text-align: center;
     bottom: 0;
     position: fixed;

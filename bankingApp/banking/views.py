@@ -1,11 +1,15 @@
+import csv
 import json
 import os
 import requests
 
 from django.contrib import messages
+from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LogoutView, LoginView
-from django.db.models import F
+from django.core.paginator import Paginator
+from django.db.models import F, Q
+from django.http import HttpResponse
 from django.shortcuts import redirect, render
 from django.urls import reverse_lazy
 from django.views import View
@@ -16,10 +20,37 @@ from banking.models import Account, Transfer
 
 
 class TransactionsPageView(ListView):
-    model = Transfer
     template_name = 'banking/transactions.html'
     context_object_name = 'transfer_list'
     paginate_by = 25
+
+    def get_queryset(self):
+        if self.request.user.is_staff:
+            return Transfer.objects.all()
+        else:
+            user = self.request.user
+            account = get_user_model().objects.get(username=user.username).account
+            transfer_list = Transfer.objects.filter(Q(sender=account) | Q(recipient=account))
+            return transfer_list
+
+
+class TransactionsCsvView(ListView):
+    model = Transfer
+
+    def render_to_response(self, context, **response_kwargs):
+        transfer_list = self.get_queryset()
+        response = HttpResponse(content_type='text/csv')
+        response['Content-Disposition'] = f'attachment; filename="{self.request.user.username}_transactions.csv"'
+        writer = csv.writer(response)
+        writer.writerow(['id', 'sender', 'recipient', 'amount', 'timestamp'])
+        for transfer in transfer_list:
+            writer.writerow([transfer.id,
+                             transfer.sender.user.username,
+                             transfer.recipient.user.username,
+                             transfer.amount,
+                             transfer.date,
+                             ])
+        return response
 
 
 class IndexPageView(TemplateView):
@@ -78,6 +109,13 @@ class AccountPageView(View):
                 recipient = form.cleaned_data['recipient']
                 amount = form.cleaned_data['amount']
 
+                if amount == 0:
+                    messages.error(request, 'cant send 0 funds')
+                    return redirect('account')
+                elif amount < 0:
+                    messages.error(request, 'cant send negative')
+                    return redirect('account')
+
                 Account.objects.filter(pk=recipient.pk).update(balance=F('balance') + amount)
 
                 Transfer.objects.create(
@@ -102,6 +140,9 @@ class AccountPageView(View):
                 elif amount == 0:
                     messages.error(request, 'cant send 0 funds')
                     return redirect('account')
+                elif amount < 0:
+                    messages.error(request, 'cant send negative')
+                    return redirect('account')
 
                 Account.objects.filter(pk=sender.pk).update(balance=F('balance') - amount)
                 Account.objects.filter(pk=recipient.pk).update(balance=F('balance') + amount)
@@ -109,12 +150,6 @@ class AccountPageView(View):
                 Transfer.objects.create(
                     sender=sender,
                     recipient=recipient,
-                    amount=amount,
-                )
-
-                Transfer.objects.create(
-                    sender=recipient,
-                    recipient=sender,
                     amount=amount,
                 )
 
