@@ -21,3 +21,63 @@ tbody tr:nth-child(odd) {
 
 }
 
+.pagination {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 120px;
+    border-radius: 5px;
+}
+
+.step-links a {
+    display: inline-block;
+    color: #000;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    padding: 8px 12px;
+    margin: 3px;
+    text-decoration: none;
+    border-radius: 3px;
+    border-radius: 5px;
+    width: 50px;
+    text-align: center;
+}
+
+.step-links span.current {
+    background-color: #283142;
+    color: #fff;
+    border: 1px solid #337ab7;
+    padding: 10px 12px;
+    margin: 10px;
+    border-radius: 5px;
+}
+
+.csv-download-link {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    background-color: #283142;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease-in-out;
+    width: 300px;
+    text-decoration: none;
+}
+
+.download-btn {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    margin-bottom: 120px;
+    padding-left: 20px;
+    text-align: center;
+}
+
+.csv-download-link:hover {
+    background-color: #40516e;
+}

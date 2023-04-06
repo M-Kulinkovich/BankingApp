@@ -18,7 +18,7 @@
                     <li><a href="{% url 'index' %}">Home</a></li>
                     <li><a href="{% url 'account' %}">Account</a></li>
                     <li><a href="{% url 'transactions' %}"</a>Transactions</li>
-                <li><b>{{ request.user.username }} | </b><a href="{% url 'logout' %}">Log out</a></li>
+                <li><a href="{% url 'account' %}"><b>{{ request.user.username }} | </b></a><a href="{% url 'logout' %}">Log out</a></li>
                 {% else %}
                     <li><a href="{% url 'register' %}">Sign Up</a></li>
                     <li><a href="{% url 'login' %}">Log In</a></li>
