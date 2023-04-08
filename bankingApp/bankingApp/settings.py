@@ -14,12 +14,12 @@ from pathlib import Path
 from dotenv import load_dotenv
 import os
 
-load_dotenv()
+from bankingApp.logging_formatter import CustomJsonFormatter
 
+load_dotenv()
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
-
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
@@ -31,7 +31,6 @@ SECRET_KEY = os.environ.get('SECRET_KEY')
 DEBUG = os.environ.get('DEBUG')
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -55,6 +54,42 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+
+    'formatters': {
+        'main_formatter': {
+            'format': '{asctime} - {levelname} - {module} - {filename} - {message}',
+            'style': '{',
+        },
+        'json_formatter': {
+            '()': CustomJsonFormatter,
+        },
+    },
+
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'main_formatter',
+        },
+        'django_file': {
+            'class': 'logging.FileHandler',
+            'formatter': 'json_formatter',
+            'filename': 'log_information.log'
+        },
+    },
+
+    'loggers': {
+        'main': {
+            'handlers': ['console', 'django_file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}
+
 ROOT_URLCONF = 'bankingApp.urls'
 
 TEMPLATES = [
@@ -75,7 +110,6 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'bankingApp.wsgi.application'
 
-
 # Database
 # https://docs.djangoproject.com/en/4.1/ref/settings/#databases
 
@@ -89,7 +123,6 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT'),
     }
 }
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -109,7 +142,6 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-
 # Internationalization
 # https://docs.djangoproject.com/en/4.1/topics/i18n/
 
@@ -120,7 +152,6 @@ TIME_ZONE = 'UTC'
 USE_I18N = True
 
 USE_TZ = True
-
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/

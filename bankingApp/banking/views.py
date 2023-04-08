@@ -1,5 +1,6 @@
 import csv
 import json
+import logging
 import os
 import requests
 
@@ -7,7 +8,6 @@ from django.contrib import messages
 from django.contrib.auth import get_user_model
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LogoutView, LoginView
-from django.core.paginator import Paginator
 from django.db.models import F, Q
 from django.http import HttpResponse
 from django.shortcuts import redirect, render
@@ -18,6 +18,8 @@ from django.views.generic import CreateView, TemplateView, ListView
 from banking.forms import RegisterUserForm, TransferForm, AddMoneyForm
 from banking.models import Account, Transfer
 
+logger = logging.getLogger('main')
+
 
 class TransactionsPageView(ListView):
     template_name = 'banking/transactions.html'
@@ -26,11 +28,11 @@ class TransactionsPageView(ListView):
 
     def get_queryset(self):
         if self.request.user.is_staff:
-            return Transfer.objects.all()
+            return Transfer.objects.all().order_by('-date')
         else:
             user = self.request.user
             account = get_user_model().objects.get(username=user.username).account
-            transfer_list = Transfer.objects.filter(Q(sender=account) | Q(recipient=account))
+            transfer_list = Transfer.objects.filter(Q(sender=account) | Q(recipient=account)).order_by('-date')
             return transfer_list
 
 
@@ -111,9 +113,11 @@ class AccountPageView(View):
 
                 if amount == 0:
                     messages.error(request, 'cant send 0 funds')
+                    logger.warning('cant send 0 funds')
                     return redirect('account')
                 elif amount < 0:
                     messages.error(request, 'cant send negative')
+                    logger.warning('cant send negative')
                     return redirect('account')
 
                 Account.objects.filter(pk=recipient.pk).update(balance=F('balance') + amount)
@@ -136,12 +140,15 @@ class AccountPageView(View):
                 sender = request.user.account
                 if sender.balance < amount:
                     messages.error(request, 'Not enough money')
+                    logger.warning('Not enough money')
                     return redirect('account')
                 elif amount == 0:
                     messages.error(request, 'cant send 0 funds')
+                    logger.warning('cant send 0 funds')
                     return redirect('account')
                 elif amount < 0:
                     messages.error(request, 'cant send negative')
+                    logger.warning('cant send negative')
                     return redirect('account')
 
                 Account.objects.filter(pk=sender.pk).update(balance=F('balance') - amount)
@@ -181,6 +188,3 @@ class RegisterUser(CreateView):
 
 class LogoutUser(LogoutView):
     next_page = 'login'
-
-
-
