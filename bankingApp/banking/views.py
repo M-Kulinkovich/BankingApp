@@ -76,6 +76,7 @@ class IndexPageView(TemplateView):
         context['gbp_rate'] = gbp_rate
         context['byn_rate'] = byn_rate
         context['pln_rate'] = pln_rate
+        context['current_user'] = self.request.user
 
         return context
 
@@ -187,3 +188,8 @@ class RegisterUser(CreateView):
 
 class LogoutUser(LogoutView):
     next_page = 'login'
+
+
+def page_not_found(request, exception):
+    context = {'request_path': request.path}
+    return render(request, 'banking/404.html', context=context, status=404)
