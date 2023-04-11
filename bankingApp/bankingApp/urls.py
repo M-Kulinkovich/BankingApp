@@ -3,6 +3,9 @@ from django.contrib import admin
 from django.urls import path, include
 from django.views.generic import RedirectView
 
+
+from banking.views import page_not_found
+
 urlpatterns = [
     path('', RedirectView.as_view(url='banking/', permanent=True)),
     path('admin/', admin.site.urls),
@@ -15,3 +18,5 @@ if settings.DEBUG:
     urlpatterns = [
                       path('__debug__/', include(debug_toolbar.urls)),
                   ] + urlpatterns
+
+handler404 = page_not_found
