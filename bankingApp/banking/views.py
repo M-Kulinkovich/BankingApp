@@ -72,11 +72,13 @@ class IndexPageView(TemplateView):
         byn_rate = data['quotes']['USDBYN']
         pln_rate = data['quotes']['USDPLN']
 
-        context['eur_rate'] = eur_rate
-        context['gbp_rate'] = gbp_rate
-        context['byn_rate'] = byn_rate
-        context['pln_rate'] = pln_rate
-        context['current_user'] = self.request.user
+        context = {
+            'eur_rate': eur_rate,
+            'gbp_rate': gbp_rate,
+            'byn_rate': byn_rate,
+            'pln_rate': pln_rate,
+            'current_user': self.request.user,
+        }
 
         return context
 
