@@ -18,7 +18,7 @@ class TestUrls(TestCase):
         self.user = User.objects.create_user(
             username=self.username,
             email='testuser@example.com',
-            password=self.password
+            password=self.password,
         )
 
     def test_index_url(self):
